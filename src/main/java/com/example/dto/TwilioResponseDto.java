@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TwilioResponseDto {
-
     private OtpStatus status;
     private String message;
 }

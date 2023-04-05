@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.text.DecimalFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 @Service
 public class TwilioOtpService {
@@ -21,35 +23,32 @@ public class TwilioOtpService {
 
     Map<String, String> otpMap = new HashMap<>();
 
-    public Mono<TwilioResponseDto> sendOtp(TwilioRequestDto requestDto){
-
+    public Mono<TwilioResponseDto> sendOtp(TwilioRequestDto requestDto) {
         TwilioResponseDto responseDto = null;
         try {
             PhoneNumber to = new PhoneNumber(requestDto.getPhoneNumber());
             PhoneNumber from = new PhoneNumber(twilioConfiguration.getTrailNumber());
             String otp = generateOtp();
-            String otpMessage ="Dear User, Your OTP is ##" + otp + "##. Use this to complete your process. Thank You.";
-
+            String otpMessage = "Dear User, Your OTP is ##" + otp + "##. Use this to complete your process. Thank You.";
             Message message = Message.creator(to, from, otpMessage).create();
             otpMap.put(requestDto.getUserName(), otp);
-            responseDto =new TwilioResponseDto(OtpStatus.DELIVERED, otpMessage);
-        }catch (Exception ex){
-            responseDto =new TwilioResponseDto(OtpStatus.FAILED, ex.getMessage());
+            responseDto = new TwilioResponseDto(OtpStatus.DELIVERED, otpMessage);
+        } catch (Exception ex) {
+            responseDto = new TwilioResponseDto(OtpStatus.FAILED, ex.getMessage());
         }
-
         return Mono.just(responseDto);
     }
 
-    public Mono<String> validateOtp(String userInputOtp, String userName){
-        if (userInputOtp.equals(otpMap.get(userName))){
+    public Mono<String> validateOtp(String userInputOtp, String userName) {
+        if (userInputOtp.equals(otpMap.get(userName))) {
             otpMap.remove(userName, userInputOtp);
             return Mono.just("Your OTP is valid, Please proceed");
-        } else{
+        } else {
             return Mono.error(new IllegalArgumentException("Invalid OTP, Please Provide a valid OTP"));
         }
     }
 
-    private String generateOtp(){
+    private String generateOtp() {
         return new DecimalFormat("000000")
                 .format(new Random().nextInt(999999));
     }

@@ -14,12 +14,10 @@ public class RouterConfiguration {
     private TwilioOtpHandler otpHandler;
 
     @Bean
-    public RouterFunction<ServerResponse> smsHandler(){
-        return RouterFunctions
-                .route()
+    public RouterFunction<ServerResponse> smsHandler() {
+        return RouterFunctions.route()
                 .POST("/router/send-OTP", otpHandler::sendOtp)
                 .POST("/router/validate-OTP", otpHandler::vaidateOtp)
                 .build();
     }
-
 }

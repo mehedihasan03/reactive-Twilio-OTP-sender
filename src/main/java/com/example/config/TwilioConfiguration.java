@@ -8,9 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "twilio")
 @Data
 public class TwilioConfiguration {
-
     private String accountSid;
     private String authToken;
     private String trailNumber;
-
 }

@@ -1,6 +1,5 @@
 package com.example.resource;
 
-import com.ctc.wstx.dtd.ModelNode;
 import com.example.dto.TwilioRequestDto;
 import com.example.service.TwilioOtpService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +17,17 @@ public class TwilioOtpHandler {
     private TwilioOtpService service;
 
     public Mono<ServerResponse> sendOtp(ServerRequest request) {
-        return request
-                .bodyToMono(TwilioRequestDto.class)
+        return request.bodyToMono(TwilioRequestDto.class)
                 .flatMap(req -> service.sendOtp(req))
                 .flatMap(req -> ServerResponse.status(HttpStatus.OK).body(BodyInserters.fromValue(req)));
     }
 
     public Mono<ServerResponse> vaidateOtp(ServerRequest request) {
-        return request
-                .bodyToMono(TwilioRequestDto.class)
-                .flatMap(dto -> service.validateOtp(dto.getOneTimePassword(), dto.getUserName()))
+        return request.bodyToMono(TwilioRequestDto.class)
+                .flatMap(dto -> service.validateOtp(
+                        dto.getOneTimePassword(),
+                        dto.getUserName()
+                ))
                 .flatMap(dto -> ServerResponse.status(HttpStatus.OK).bodyValue(dto));
     }
 }
